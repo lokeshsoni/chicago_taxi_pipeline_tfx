@@ -69,7 +69,7 @@ class KubeflowDagRunnerTest(tf.test.TestCase):
       containers = [
           c for c in pipeline['spec']['templates'] if 'container' in c
       ]
-      self.assertEqual(2, len(containers))
+      self.assertEqual(3, len(containers))
 
       big_query_container = [
           c for c in containers if c['name'] == 'bigqueryexamplegen'
@@ -122,27 +122,17 @@ class KubeflowDagRunnerTest(tf.test.TestCase):
       containers = [
           c for c in pipeline['spec']['templates'] if 'container' in c
       ]
-      self.assertEqual(2, len(containers))
+      self.assertEqual(3, len(containers))
 
       # Check that each container has default GCP credentials.
-
-      container_0 = containers[0]
-      env = [
-          env for env in container_0['container']['env']
-          if env['name'] == 'GOOGLE_APPLICATION_CREDENTIALS'
-      ]
-      self.assertEqual(1, len(env))
-      self.assertEqual('/secret/gcp-credentials/user-gcp-sa.json',
-                       env[0]['value'])
-
-      container_1 = containers[0]
-      env = [
-          env for env in container_1['container']['env']
-          if env['name'] == 'GOOGLE_APPLICATION_CREDENTIALS'
-      ]
-      self.assertEqual(1, len(env))
-      self.assertEqual('/secret/gcp-credentials/user-gcp-sa.json',
-                       env[0]['value'])
+      for container in containers:
+        env = [
+            env for env in container['container']['env']
+            if env['name'] == 'GOOGLE_APPLICATION_CREDENTIALS'
+        ]
+        self.assertEqual(1, len(env))
+        self.assertEqual('/secret/gcp-credentials/user-gcp-sa.json',
+                         env[0]['value'])
 
   def test_volume_mounting_pipeline_operator_funcs(self):
     mount_volume_op = onprem.mount_pvc('my-persistent-volume-claim',
@@ -164,18 +154,14 @@ class KubeflowDagRunnerTest(tf.test.TestCase):
       containers = [
           c for c in pipeline['spec']['templates'] if 'container' in c
       ]
-      self.assertEqual(2, len(containers))
+      self.assertEqual(3, len(containers))
 
       # Check that each container has the volume mounted.
-      self.assertEqual([{
-          'name': 'my-volume-name',
-          'mountPath': '/mnt/volume-mount-path'
-      }], containers[0]['container']['volumeMounts'])
-
-      self.assertEqual([{
-          'name': 'my-volume-name',
-          'mountPath': '/mnt/volume-mount-path'
-      }], containers[1]['container']['volumeMounts'])
+      for container in containers:
+        self.assertEqual([{
+            'name': 'my-volume-name',
+            'mountPath': '/mnt/volume-mount-path'
+        }], container['container']['volumeMounts'])
 
       # Check that the PVC is specified.
       self.assertEqual([{

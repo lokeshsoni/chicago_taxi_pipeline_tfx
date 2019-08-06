@@ -20,6 +20,7 @@ import datetime
 import mock
 import tensorflow as tf
 
+from ml_metadata.proto import metadata_store_pb2
 from tfx.components.base import base_component
 from tfx.components.base import base_executor
 from tfx.orchestration import pipeline
@@ -126,10 +127,12 @@ class AirflowDagRunnerTest(tf.test.TestCase):
             d=component_d.outputs.output,
             output=channel.Channel(type_name='e')))
 
+    connection_config = metadata_store_pb2.ConnectionConfig()
+    connection_config.sqlite.SetInParent()
     test_pipeline = pipeline.Pipeline(
         pipeline_name='x',
         pipeline_root='y',
-        metadata_connection_config=None,
+        metadata_connection_config=connection_config,
         components=[
             component_d, component_c, component_a, component_b, component_e
         ])
