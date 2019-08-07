@@ -1,1 +1,6 @@
-apache-airflow[postgres,gcp]
+# apache-airflow[postgres,gcp]
+# apache-beam[gcp]
+tensorflow==1.13.1 
+apache-airflow==1.10.3 
+tfx==0.13.0
+docker==4.0.1

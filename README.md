@@ -38,49 +38,16 @@ Explore the full dataset in the
 
 ### Install dependencies
 
-Development for this example will be isolated in a Python virtual environment.
-This allows us to experiment with different versions of dependencies.
-
-There are many ways to install `virtualenv`, see the
-[TensorFlow install guides](https://www.tensorflow.org/install) for different
-platforms, but here are a couple:
-
-* For Linux:
-
-<pre class="devsite-terminal devsite-click-to-copy">
-sudo apt-get install python-pip python-virtualenv python-dev build-essential
-</pre>
-
-* For Mac:
-
-<pre class="devsite-terminal devsite-click-to-copy">
-sudo easy_install pip
-pip install --upgrade virtualenv
-</pre>
-
-Create a Python 2.7 virtual environment for this example and activate the
-`virtualenv`:
-
-<pre class="devsite-terminal devsite-click-to-copy">
-virtualenv -p python2.7 taxi_pipeline
-source ./taxi_pipeline/bin/activate
-</pre>
 
 Configure common paths:
 
 <pre class="devsite-terminal devsite-click-to-copy">
-export AIRFLOW_HOME=~/airflow
-export TAXI_DIR=~/taxi
-export TFX_DIR=~/tfx
+export AIRFLOW_HOME=/Users/laksh/siris/learning/chicago_taxi_pipeline_tfx/airflow
+export TAXI_DIR=/Users/laksh/siris/learning/chicago_taxi_pipeline_tfx/taxi
+export TFX_DIR=/Users/laksh/siris/learning/chicago_taxi_pipeline_tfx/tfx
 </pre>
 
 Next, install the dependencies required by the Chicago Taxi example:
-
-<!--- bring back once requirements.txt file is available
-<pre class="devsite-terminal devsite-click-to-copy">
-pip install -r requirements.txt
-</pre>
--->
 
 <pre class="devsite-terminal devsite-click-to-copy">
 pip install tensorflow==1.13.1
@@ -98,35 +65,15 @@ airflow initdb
 
 ### Copy the pipeline definition to Airflow's DAG directory
 
-The benefit of the local example is that you can edit any part of the pipeline
-and experiment very quickly with various components. The example comes with a
-small subset of the Taxi Trips dataset as CSV files.
-
-First let's download the TFX source we can run the example:
-
-<pre class="devsite-terminal devsite-click-to-copy">
-git clone https://github.com/tensorflow/tfx
-cd tfx/tfx/examples/chicago_taxi_pipeline
-</pre>
-
-Let's copy the dataset CSV to the directory where TFX ExampleGen will ingest it
-from:
-
 <pre class="devsite-terminal devsite-click-to-copy">
 mkdir -p $TAXI_DIR/data/simple
 cp data/simple/data.csv $TAXI_DIR/data/simple
 </pre>
 
-Let's copy the TFX pipeline definition to Airflow's
-<code>DAGs directory</code> <code>($AIRFLOW_HOME/dags)</code> so it can run the pipeline.
-
 <pre class="devsite-terminal devsite-click-to-copy">
 mkdir -p $AIRFLOW_HOME/dags/taxi
 cp taxi_pipeline_simple.py $AIRFLOW_HOME/dags/taxi
 </pre>
-
-The module file <code>taxi_utils.py</code> used by the Trainer and Transform
-components will reside in $TAXI_DIR, let's copy it there.
 
 <pre class="devsite-terminal devsite-click-to-copy">
 cp taxi_utils.py $TAXI_DIR
@@ -136,19 +83,9 @@ cp taxi_utils.py $TAXI_DIR
 
 ### Start Airflow
 
-Start the <code>Airflow webserver</code> (in 'taxi_pipeline' virtualenv):
-
 <pre class="devsite-terminal devsite-click-to-copy">
 airflow webserver
 </pre>
-
-Open a new terminal window:
-
-<pre class="devsite-terminal devsite-click-to-copy">
-source ./taxi_pipeline/bin/activate
-</pre>
-
-and start the <code>Airflow scheduler</code>:
 
 <pre class="devsite-terminal devsite-click-to-copy">
 airflow scheduler
